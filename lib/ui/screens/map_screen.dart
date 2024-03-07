@@ -109,23 +109,7 @@ class _MapScreenState extends State<MapScreen> {
                       ? Container(
                           width: MediaQuery.of(context).size.width,
                           height: MediaQuery.of(context).size.height,
-                          child: GoogleMap(
-                            myLocationButtonEnabled: false,
-                            myLocationEnabled: true,
-                            compassEnabled: false,
-                            tiltGesturesEnabled: false,
-                            markers: mapProv.markers,
-                            mapType: isSatellite
-                                ? MapType.satellite
-                                : MapType.normal,
-                            initialCameraPosition: mapProv.cameraPosition!,
-                            onMapCreated: mapProv.onMapCreated,
-                            mapToolbarEnabled: false,
-                            onTap: (loc) => mapProv.onTapMap(loc,
-                                mode: widget.trackingMode),
-                            polygons: mapProv.polygons,
-                            polylines: mapProv.polylines,
-                          ),
+                          child: _buildGoogleMap(mapProv),
                         )
                       : Center(
                           child: CircularProgressIndicator(),
@@ -360,6 +344,33 @@ class _MapScreenState extends State<MapScreen> {
           },
         );
       },
+    );
+  }
+
+  Widget _buildGoogleMap(MapProvider mapProv) {
+    // Neither AbsorbPointer nor IgnorePointer cause GoogleMap to ignore gestures
+    return AbsorbPointer(
+      absorbing: true,
+      child: IgnorePointer(
+        ignoring: true,
+        child: GoogleMap(
+          myLocationButtonEnabled: false,
+          myLocationEnabled: true,
+          compassEnabled: false,
+          tiltGesturesEnabled: false,
+          markers: mapProv.markers,
+          mapType: isSatellite
+              ? MapType.satellite
+              : MapType.normal,
+          initialCameraPosition: mapProv.cameraPosition!,
+          onMapCreated: mapProv.onMapCreated,
+          mapToolbarEnabled: false,
+          onTap: (loc) => mapProv.onTapMap(loc,
+              mode: widget.trackingMode),
+          polygons: mapProv.polygons,
+          polylines: mapProv.polylines,
+        ),
+      ),
     );
   }
 }
